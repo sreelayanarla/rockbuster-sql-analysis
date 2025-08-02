@@ -1,5 +1,5 @@
-
--- CTE 1: Calculate total amount paid per customer in selected cities
+-- Step 1: Create a Common Table Expression (CTE) to calculate total amount paid by each customer
+-- Only include customers from a selected list of top cities
 WITH customer_payments AS (
     SELECT
         A.customer_id,
@@ -7,7 +7,7 @@ WITH customer_payments AS (
         A.last_name,
         C.city,
         D.country,
-        SUM(E.amount) AS total_amount_paid
+        SUM(E.amount) AS total_amount_paid  -- Calculate total amount paid per customer
     FROM payment E
     INNER JOIN customer A ON E.customer_id = A.customer_id
     INNER JOIN address B ON A.address_id = B.address_id
@@ -18,10 +18,11 @@ WITH customer_payments AS (
         'Pontianak', 'Shimoga', 'Aparecida de Goinia', 
         'Zalantun', 'Taguig'
     )
-    GROUP BY A.customer_id, A.first_name, A.last_name, C.city, D.country
+    GROUP BY 
+        A.customer_id, A.first_name, A.last_name, C.city, D.country
 ),
 
--- CTE 2: Select the top 5 customers based on total amount paid
+-- Step 2: Create another CTE to select the top 5 customers based on total amount paid
 top_customers AS (
     SELECT *
     FROM customer_payments
@@ -29,7 +30,8 @@ top_customers AS (
     LIMIT 5
 )
 
--- Final Query: Calculate the average total amount paid by the top 5 customers
+-- Step 3: Calculate the average total amount paid by these top 5 customers
 SELECT 
-    AVG(total_amount_paid) AS average_total_amount_paid
+    AVG(total_amount_paid) AS average
 FROM top_customers;
+
